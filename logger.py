@@ -26,6 +26,7 @@ class Logger :
         self.file.close()
 
 #Testing Driver
+'''
 dict = {
     'test' : 43,
     'ytho' : 'mesayso'
@@ -38,3 +39,4 @@ log = Logger(path)
 log.update_log(dict_json + '\n')
 log.update_log(dict_json + '\n')
 log.close_log()
+'''

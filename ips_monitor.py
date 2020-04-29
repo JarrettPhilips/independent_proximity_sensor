@@ -4,7 +4,7 @@
 
 '''
 
-import logger.py
+import logger
 
 import time
 import socket
@@ -16,7 +16,7 @@ from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.animation
 
 #Setup for TCP server
-TCP_IP = '25.118.16.61'
+TCP_IP = '127.0.0.1'
 TCP_PORT = 5005
 BUFFER_SIZE = 20  #Default is 1024
 
@@ -24,8 +24,8 @@ s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.bind((TCP_IP, TCP_PORT))
 
 #Setup for data logger
-path = "/home/jarrettphilips/Desktop/ips_logs"
-log = Logger(path)
+path = "/Users/jarrettphilips/Desktop/ips_logs"
+log = logger.Logger(path)
 
 #Setup for visual plot
 plt.style.use('dark_background')
@@ -36,6 +36,12 @@ ax.autoscale(enable=True, axis='both', tight=True)
 ax.w_xaxis.set_pane_color((0.0, 0.0, 0.0, 0.0))
 ax.w_yaxis.set_pane_color((0.0, 0.0, 0.0, 0.0))
 ax.w_zaxis.set_pane_color((0.0, 0.0, 0.0, 0.0))
+graph = ax.scatter([0], [0], [0], color='yellow')
+plt.show(block=False)
+plt.pause(0.0001)
+graph = ax.scatter([3], [2], [-1], color='blue')
+plt.show(block=False)
+plt.pause(0.0001)
 
 #####################################
 def wait_for_data():
@@ -47,16 +53,11 @@ def wait_for_data():
 		data_string = conn.recv(BUFFER_SIZE)
 		if not data_string: break
 		print("received data:", data_string)
-
-	return data_string
+		return data_string.decode()
 
 def parse_data(data_string):
-	x = []
-	y = []
-	z = []
-	
-
-	return (x, y, z)
+	data_string_split = data_string.split(',')
+	return (float(data_string_split[0]), float(data_string_split[1]), float(data_string_split[2]))
 
 def log_point(x, y, z):
 	json_point = json.dumps([x, y, z])
@@ -66,20 +67,18 @@ def plot_point(x, y, z):
 	global graph
 	graph = ax.scatter([x], [y], [z], color='red')
 	plt.show(block=False)
+	plt.pause(0.0001)
 
 #####################################
 def main():
 	while 1: 
-		print("main")
 		data_string = wait_for_data()
 		(x, y, z) = parse_data(data_string)
 
-		for i in range(len(x))
-			log_point(x[i], y[i], z[i])
-			plot_point(x[i], y[i], z[i])
+		log_point(x, y, z)
+		plot_point(x, y, z)
 
 main()
-conn.close()
 log.close_log()
 plt.show(block=True)
 
